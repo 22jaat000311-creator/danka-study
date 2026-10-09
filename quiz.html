@@ -22,8 +22,7 @@
       <a href="answer-keys.html">आंसर की</a>
       <a href="quiz.html" class="active">क्विज़</a>
       <a href="current-affairs.html">करेंट अफेयर्स</a>
-      <a href="eligibility.html">योग्यता जांच</a>
-      <a href="haryana.html">हरियाणा हब</a>
+      <a href="photo-resize.html">फोटो टूल</a>
     </nav>
   </div>
 </header>
@@ -60,9 +59,9 @@
             <label>प्रश्नों की संख्या</label>
             <div class="opt-row" id="countRow">
               <button class="opt-pill sel" data-v="10">10</button>
+              <button class="opt-pill" data-v="15">15</button>
+              <button class="opt-pill" data-v="20">20</button>
               <button class="opt-pill" data-v="25">25</button>
-              <button class="opt-pill" data-v="50">50</button>
-              <button class="opt-pill" data-v="0">सभी</button>
             </div>
           </div>
           <div class="q-nav">
@@ -96,6 +95,7 @@
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="btn" id="retryQuiz">फिर से खेलें</button>
             <button class="btn-outline" id="changeCat" style="color:#111;border-color:#666">कैटेगरी बदलें</button>
+            <button class="btn-outline" id="goHome" style="color:#111;border-color:#666">🏠 होम</button>
           </div>
         </div>
       </div>
@@ -140,7 +140,29 @@ var QUIZ_MONTHS = [
 var quizBank = null;
 var sel = { kind: null, name: '', questions: [] };
 var timerSec = 5, qLimit = 10;
-var Q = { qs: [], i: 0, score: 0, timerId: null, left: 0, total: 0, answered: false };
+var Q = { qs: [], i: 0, score: 0, timerId: null, left: 0, total: 0, answered: false, advId: null };
+var AC = null;
+function ac() {
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  } catch (e) { return null; }
+}
+function tone(freq, t0, dur, type, vol) {
+  var c = ac(); if (!c) return;
+  var o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.value = freq;
+  var t = c.currentTime + (t0 || 0);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol || 0.22, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function sndCorrect() { tone(660, 0, 0.12, 'sine'); tone(990, 0.12, 0.2, 'sine'); }
+function sndWrong() { tone(220, 0, 0.22, 'sawtooth', 0.14); tone(160, 0.16, 0.3, 'sawtooth', 0.14); }
+function qStopAdv() { if (Q.advId) { clearTimeout(Q.advId); Q.advId = null; } }
 
 function qShuffle(a) {
   for (var i = a.length - 1; i > 0; i--) {
@@ -157,12 +179,6 @@ function qShow(id) {
 }
 function qStopTimer() {
   if (Q.timerId) { clearInterval(Q.timerId); Q.timerId = null; }
-}
-function qCatCount(id) {
-  for (var i = 0; i < QUIZ_CATS.length; i++) {
-    if (QUIZ_CATS[i].id === id) return QUIZ_CATS[i].count;
-  }
-  return 0;
 }
 function qPillRow(rowId, cb) {
   var row = document.getElementById(rowId);
@@ -190,7 +206,7 @@ function qSelectCategory(catId) {
   function ready(cat) {
     sel = { kind: 'cat', name: cat.name, questions: cat.questions };
     document.getElementById('setupTitle').textContent = cat.name;
-    document.getElementById('setupCount').textContent = 'कुल ' + cat.questions.length + ' प्रश्न उपलब्ध';
+    document.getElementById('setupCount').textContent = '';
   }
   if (catCache[catId]) { ready(catCache[catId]); return; }
   Promise.all(meta.files.map(function (f) { return fetchJSON(f, null); })).then(function (parts) {
@@ -212,11 +228,12 @@ function qSelectMonth(m) {
   fetchJSON(m.file, null).then(function (d) {
     var qs = (d && d.questions) || [];
     sel = { kind: 'ca', name: 'Current Affairs (' + m.label + ')', questions: qs };
-    document.getElementById('setupCount').textContent = 'कुल ' + qs.length + ' प्रश्न उपलब्ध';
+    document.getElementById('setupCount').textContent = '';
   });
 }
 function qStart() {
   if (!sel.questions.length) return;
+  ac();
   Q.qs = qShuffle(sel.questions.slice());
   if (qLimit > 0) Q.qs = Q.qs.slice(0, qLimit);
   Q.i = 0; Q.score = 0;
@@ -224,9 +241,10 @@ function qStart() {
   qAsk();
 }
 function qAsk() {
+  qStopAdv();
   var q = Q.qs[Q.i];
   Q.answered = false;
-  document.getElementById('qCount').textContent = 'प्रश्न ' + (Q.i + 1) + ' / ' + Q.qs.length;
+  document.getElementById('qCount').textContent = 'प्रश्न ' + (Q.i + 1);
   document.getElementById('qText').textContent = q.q;
   document.getElementById('qFact').classList.add('hidden');
   document.getElementById('nextQ').classList.add('hidden');
@@ -271,21 +289,25 @@ function qReveal(chosen) {
   var nx = document.getElementById('nextQ');
   nx.textContent = (Q.i === Q.qs.length - 1) ? 'रिजल्ट देखें →' : 'अगला प्रश्न →';
   nx.classList.remove('hidden');
+  qStopAdv();
+  Q.advId = setTimeout(qNext, 1800);
 }
 function qAnswer(idx) {
   if (Q.answered) return;
   Q.answered = true;
   qStopTimer();
-  if (idx === Q.qs[Q.i].answer) Q.score++;
+  if (idx === Q.qs[Q.i].answer) { Q.score++; sndCorrect(); } else { sndWrong(); }
   qReveal(idx);
 }
 function qTimeout() {
   if (Q.answered) return;
   Q.answered = true;
   qStopTimer();
+  sndWrong();
   qReveal(-1);
 }
 function qNext() {
+  qStopAdv();
   Q.i++;
   if (Q.i >= Q.qs.length) { qResult(); } else { qAsk(); }
 }
@@ -308,8 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var b = document.createElement('button');
     b.className = 'cat-card';
     b.setAttribute('data-cat', c.id);
-    b.innerHTML = '<span class="cicon">' + c.icon + '</span><strong>' + esc(c.name) +
-      '</strong><small>' + qCatCount(c.id) + ' प्रश्न</small>';
+    b.innerHTML = '<span class="cicon">' + c.icon + '</span><strong>' + esc(c.name) + '</strong>';
     b.addEventListener('click', function () { qSelectCategory(c.id); });
     cg.appendChild(b);
   });
@@ -330,6 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('nextQ').addEventListener('click', qNext);
   document.getElementById('retryQuiz').addEventListener('click', qStart);
   document.getElementById('changeCat').addEventListener('click', function () { qShow('screenCats'); });
+  document.getElementById('goHome').addEventListener('click', function () { location.href = 'index.html'; });
 });
 </script>
 </body>
