@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Sarkari Quiz — Haryana GK, SSC, Railway, UPSC | Danka Study</title>
+<meta name="description" content="Free sarkari exam quiz Hindi me — Haryana GK, SSC, Railway, UPSC, UP GK, Bihar GK aur Current Affairs. Timer ke saath practice, bilkul free.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap head-in">
+    <a class="brand" href="index.html" aria-label="Danka Study — होम">
+      <span class="brand-badge">DS</span>
+      <span class="brand-text">Danka <em>Study</em></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="मेन्यू" aria-expanded="false">☰</button>
+    <nav class="main-nav" id="mainNav" aria-label="मुख्य मेन्यू">
+      <a href="index.html">होम</a>
+      <a href="jobs.html">भर्तियाँ</a>
+      <a href="results.html">रिजल्ट</a>
+      <a href="answer-keys.html">आंसर की</a>
+      <a href="quiz.html" class="active">क्विज़</a>
+      <a href="current-affairs.html">करेंट अफेयर्स</a>
+      <a href="eligibility.html">योग्यता जांच</a>
+      <a href="haryana.html">हरियाणा हब</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="wrap quiz-shell">
+      <div class="section-head"><h2>Free Quiz</h2></div>
+
+      <!-- Screen 1: category select -->
+      <div id="screenCats">
+        <h3>कैटेगरी चुनें</h3>
+        <div class="cat-grid" id="catGrid"><div class="empty">लोड हो रहा है…</div></div>
+        <h3 style="margin-top:24px">Current Affairs — महीना चुनें</h3>
+        <div class="month-grid" id="monthGrid"></div>
+      </div>
+
+      <!-- Screen 2: setup -->
+      <div id="screenSetup" class="hidden">
+        <div class="q-card">
+          <h3 id="setupTitle">कैटेगरी</h3>
+          <p class="meta" id="setupCount"></p>
+          <div class="field">
+            <label>टाइमर (प्रति प्रश्न)</label>
+            <div class="opt-row" id="timerRow">
+              <button class="opt-pill" data-v="3">3 सेकंड</button>
+              <button class="opt-pill sel" data-v="5">5 सेकंड</button>
+              <button class="opt-pill" data-v="10">10 सेकंड</button>
+              <button class="opt-pill" data-v="30">30 सेकंड</button>
+              <button class="opt-pill" data-v="60">60 सेकंड</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>प्रश्नों की संख्या</label>
+            <div class="opt-row" id="countRow">
+              <button class="opt-pill sel" data-v="10">10</button>
+              <button class="opt-pill" data-v="25">25</button>
+              <button class="opt-pill" data-v="50">50</button>
+              <button class="opt-pill" data-v="0">सभी</button>
+            </div>
+          </div>
+          <div class="q-nav">
+            <button class="btn-outline" id="backToCats" style="color:#111;border-color:#666">← कैटेगरी</button>
+            <button class="btn" id="startQuiz">क्विज़ शुरू करें</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 3: quiz -->
+      <div id="screenQuiz" class="hidden">
+        <div class="q-card">
+          <div class="q-top"><span class="q-count" id="qCount"></span><span class="q-timer" id="qTimer"></span></div>
+          <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+          <p class="q-text" id="qText"></p>
+          <div id="qOpts"></div>
+          <div class="fact-box hidden" id="qFact"></div>
+          <div class="q-nav">
+            <button class="btn-outline" id="quitQuiz" style="color:#111;border-color:#666">क्विज़ छोड़ें</button>
+            <button class="btn hidden" id="nextQ">अगला प्रश्न →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 4: result -->
+      <div id="screenResult" class="hidden">
+        <div class="result-card">
+          <h3>आपका स्कोर</h3>
+          <div class="result-score"><span id="rScore">0</span> / <span id="rTotal">0</span></div>
+          <p id="rMsg"></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn" id="retryQuiz">फिर से खेलें</button>
+            <button class="btn-outline" id="changeCat" style="color:#111;border-color:#666">कैटेगरी बदलें</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="social-row" aria-label="सोशल मीडिया">
+      <a class="soc" href="https://www.instagram.com/dankarapidfire/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1-3.2 0-3.6 0-4.8-.1-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-9.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/></svg><span>Instagram</span></a>
+      <a class="soc" href="https://www.facebook.com/profile.php?id=61594789661334" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21.9v-7.8h2.6l.4-3h-3V9.2c0-.9.3-1.5 1.6-1.5h1.5V5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6v7.8a10 10 0 0 0 3.1 0z"/></svg><span>Facebook</span></a>
+      <a class="soc" href="https://www.youtube.com/@cetyodhafinance" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 12s0-3.9-.5-5.6c-.3-1-1.1-1.8-2.1-2C18.6 4 12 4 12 4s-6.6 0-8.4.4c-1 .3-1.8 1-2.1 2C1 8.1 1 12 1 12s0 3.9.5 5.6c.3 1 1.1 1.8 2.1 2 1.8.4 8.4.4 8.4.4s6.6 0 8.4-.4c1-.3 1.8-1 2.1-2 .5-1.7.5-5.6.5-5.6zM9.8 15.5v-7l6 3.5-6 3.5z"/></svg><span>YouTube</span></a>
+      <!-- TODO_DANKA_YT_URL: Danka Rapid Fire YouTube channel ka URL milte hi href="#" ki jagah dalein -->
+      <a class="soc" href="#" aria-label="Danka Rapid Fire YouTube — जल्द आ रहा है"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 12s0-3.9-.5-5.6c-.3-1-1.1-1.8-2.1-2C18.6 4 12 4 12 4s-6.6 0-8.4.4c-1 .3-1.8 1-2.1 2C1 8.1 1 12 1 12s0 3.9.5 5.6c.3 1 1.1 1.8 2.1 2 1.8.4 8.4.4 8.4.4s6.6 0 8.4-.4c1-.3 1.8-1 2.1-2 .5-1.7.5-5.6.5-5.6zM9.8 15.5v-7l6 3.5-6 3.5z"/></svg><span>Danka YT</span></a>
+      <!-- TODO_WHATSAPP_CHANNEL_URL: WhatsApp Channel ka invite link milte hi href="#" ki jagah dalein -->
+      <a class="soc" href="#" aria-label="WhatsApp Channel — जल्द आ रहा है"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4 0-.5.1-.7l.4-.5c.1-.2.1-.3 0-.5L9.4 8c-.1-.3-.3-.3-.5-.3h-.5c-.2 0-.5.2-.7.5-.2.3-.9 1-.9 2.5s1 2.9 1.1 3.1c.1.2 1.9 3 4.7 4.1 1.9.8 2.7.9 3.6.7.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3z"/></svg><span>WhatsApp</span></a>
+    </div>
+    <p class="foot-note"><strong>नोट:</strong> भर्तियों, रिजल्ट व आंसर की की अंतिम व सही जानकारी हमेशा आधिकारिक नोटिफिकेशन / वेबसाइट से verify करें।</p>
+    <p class="foot-note">Danka Study — सरकारी नौकरी की तैयारी, बिल्कुल मुफ्त।</p>
+    <p class="copy">© 2026 Danka Study</p>
+  </div>
+</footer>
+<script src="assets/site.js"></script>
+<script>
+/* Danka Study Quiz engine — black/gold theme */
+var QUIZ_CATS = [
+  { id: 'haryana_gk', name: 'Haryana GK', icon: '🌾' },
+  { id: 'ssc',        name: 'SSC',        icon: '📚' },
+  { id: 'railway',    name: 'Railway',    icon: '🚂' },
+  { id: 'upsc',       name: 'UPSC',       icon: '🏛️' },
+  { id: 'up_gk',      name: 'UP GK',      icon: '🕌' },
+  { id: 'bihar_gk',   name: 'Bihar GK',   icon: '🌉' }
+];
+var QUIZ_MONTHS = [
+  { file: 'data/quiz/ca_2026_05.json', label: 'मई 2026' },
+  { file: 'data/quiz/ca_2026_06.json', label: 'जून 2026' },
+  { file: 'data/quiz/ca_2026_07.json', label: 'जुलाई 2026' },
+  { file: 'data/quiz/ca_2026_08.json', label: 'अगस्त 2026' },
+  { file: 'data/quiz/ca_2026_09.json', label: 'सितंबर 2026' },
+  { file: 'data/quiz/ca_2026_10.json', label: 'अक्टूबर 2026' }
+];
+var quizBank = null;
+var sel = { kind: null, name: '', questions: [] };
+var timerSec = 5, qLimit = 10;
+var Q = { qs: [], i: 0, score: 0, timerId: null, left: 0, total: 0, answered: false };
+
+function qShuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)), t = a[i];
+    a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function qShow(id) {
+  ['screenCats', 'screenSetup', 'screenQuiz', 'screenResult'].forEach(function (s) {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+  window.scrollTo(0, 0);
+}
+function qStopTimer() {
+  if (Q.timerId) { clearInterval(Q.timerId); Q.timerId = null; }
+}
+function qCatCount(id) {
+  if (!quizBank || !quizBank.categories) return 0;
+  for (var i = 0; i < quizBank.categories.length; i++) {
+    if (quizBank.categories[i].id === id) return quizBank.categories[i].questions.length;
+  }
+  return 0;
+}
+function qPillRow(rowId, cb) {
+  var row = document.getElementById(rowId);
+  row.addEventListener('click', function (e) {
+    var b = e.target.closest('.opt-pill');
+    if (!b) return;
+    row.querySelectorAll('.opt-pill').forEach(function (x) { x.classList.remove('sel'); });
+    b.classList.add('sel');
+    cb(b.getAttribute('data-v'));
+  });
+}
+function qSelectCategory(catId) {
+  if (!quizBank || !quizBank.categories) return;
+  var cat = null;
+  for (var i = 0; i < quizBank.categories.length; i++) {
+    if (quizBank.categories[i].id === catId) { cat = quizBank.categories[i]; break; }
+  }
+  if (!cat) return;
+  sel = { kind: 'cat', name: cat.name, questions: cat.questions };
+  document.getElementById('setupTitle').textContent = cat.name;
+  document.getElementById('setupCount').textContent = 'कुल ' + cat.questions.length + ' प्रश्न उपलब्ध';
+  document.querySelectorAll('#catGrid .cat-card').forEach(function (c) {
+    c.classList.toggle('sel', c.getAttribute('data-cat') === catId);
+  });
+  qShow('screenSetup');
+}
+function qSelectMonth(m) {
+  document.getElementById('setupTitle').textContent = 'Current Affairs — ' + m.label;
+  document.getElementById('setupCount').textContent = 'लोड हो रहा है…';
+  qShow('screenSetup');
+  fetchJSON(m.file, null).then(function (d) {
+    var qs = (d && d.questions) || [];
+    sel = { kind: 'ca', name: 'Current Affairs (' + m.label + ')', questions: qs };
+    document.getElementById('setupCount').textContent = 'कुल ' + qs.length + ' प्रश्न उपलब्ध';
+  });
+}
+function qStart() {
+  if (!sel.questions.length) return;
+  Q.qs = qShuffle(sel.questions.slice());
+  if (qLimit > 0) Q.qs = Q.qs.slice(0, qLimit);
+  Q.i = 0; Q.score = 0;
+  qShow('screenQuiz');
+  qAsk();
+}
+function qAsk() {
+  var q = Q.qs[Q.i];
+  Q.answered = false;
+  document.getElementById('qCount').textContent = 'प्रश्न ' + (Q.i + 1) + ' / ' + Q.qs.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qFact').classList.add('hidden');
+  document.getElementById('nextQ').classList.add('hidden');
+  var box = document.getElementById('qOpts');
+  box.innerHTML = '';
+  q.options.forEach(function (opt, idx) {
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+    b.addEventListener('click', function () { qAnswer(idx); });
+    box.appendChild(b);
+  });
+  Q.left = timerSec; Q.total = timerSec;
+  qTickUI();
+  qStopTimer();
+  Q.timerId = setInterval(function () {
+    Q.left--;
+    qTickUI();
+    if (Q.left <= 0) { qTimeout(); }
+  }, 1000);
+}
+function qTickUI() {
+  var t = document.getElementById('qTimer');
+  t.textContent = Q.left + 's';
+  t.classList.toggle('low', Q.left <= 5);
+  document.getElementById('timerFill').style.width = Math.max(0, (Q.left / Q.total) * 100) + '%';
+}
+function qReveal(chosen) {
+  var q = Q.qs[Q.i];
+  var btns = document.getElementById('qOpts').querySelectorAll('.opt');
+  btns.forEach(function (b, idx) {
+    b.disabled = true;
+    if (idx === q.answer) { b.classList.add('correct'); }
+    else if (idx === chosen) { b.classList.add('wrong'); }
+    else { b.classList.add('dim'); }
+  });
+  if (q.fact) {
+    var f = document.getElementById('qFact');
+    f.innerHTML = '<strong>फैक्ट:</strong> ' + esc(q.fact);
+    f.classList.remove('hidden');
+  }
+  var nx = document.getElementById('nextQ');
+  nx.textContent = (Q.i === Q.qs.length - 1) ? 'रिजल्ट देखें →' : 'अगला प्रश्न →';
+  nx.classList.remove('hidden');
+}
+function qAnswer(idx) {
+  if (Q.answered) return;
+  Q.answered = true;
+  qStopTimer();
+  if (idx === Q.qs[Q.i].answer) Q.score++;
+  qReveal(idx);
+}
+function qTimeout() {
+  if (Q.answered) return;
+  Q.answered = true;
+  qStopTimer();
+  qReveal(-1);
+}
+function qNext() {
+  Q.i++;
+  if (Q.i >= Q.qs.length) { qResult(); } else { qAsk(); }
+}
+function qResult() {
+  qStopTimer();
+  document.getElementById('rScore').textContent = Q.score;
+  document.getElementById('rTotal').textContent = Q.qs.length;
+  var pct = Q.qs.length ? (Q.score / Q.qs.length) * 100 : 0;
+  var msg = pct >= 80 ? 'शानदार प्रदर्शन! 🎉' :
+            pct >= 50 ? 'अच्छा प्रयास — practice जारी रखें 💪' :
+                        'हार न मानें — दोबारा कोशिश करें 📚';
+  document.getElementById('rMsg').textContent = msg + ' (' + sel.name + ')';
+  qShow('screenResult');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var cg = document.getElementById('catGrid');
+  fetchJSON('data/quiz/questions.json', null).then(function (d) {
+    quizBank = d;
+    cg.innerHTML = '';
+    QUIZ_CATS.forEach(function (c) {
+      var b = document.createElement('button');
+      b.className = 'cat-card';
+      b.setAttribute('data-cat', c.id);
+      b.innerHTML = '<span class="cicon">' + c.icon + '</span><strong>' + esc(c.name) +
+        '</strong><small>' + qCatCount(c.id) + ' प्रश्न</small>';
+      b.addEventListener('click', function () { qSelectCategory(c.id); });
+      cg.appendChild(b);
+    });
+    if (location.hash === '#haryana') qSelectCategory('haryana_gk');
+  });
+  var mg = document.getElementById('monthGrid');
+  QUIZ_MONTHS.forEach(function (m) {
+    var b = document.createElement('button');
+    b.className = 'cat-card';
+    b.innerHTML = '<span class="cicon">📰</span><strong>' + esc(m.label) + '</strong><small>Current Affairs</small>';
+    b.addEventListener('click', function () { qSelectMonth(m); });
+    mg.appendChild(b);
+  });
+  qPillRow('timerRow', function (v) { timerSec = parseInt(v, 10); });
+  qPillRow('countRow', function (v) { qLimit = parseInt(v, 10); });
+  document.getElementById('startQuiz').addEventListener('click', qStart);
+  document.getElementById('backToCats').addEventListener('click', function () { qShow('screenCats'); });
+  document.getElementById('quitQuiz').addEventListener('click', function () { qStopTimer(); qShow('screenCats'); });
+  document.getElementById('nextQ').addEventListener('click', qNext);
+  document.getElementById('retryQuiz').addEventListener('click', qStart);
+  document.getElementById('changeCat').addEventListener('click', function () { qShow('screenCats'); });
+});
+</script>
+</body>
+</html>
