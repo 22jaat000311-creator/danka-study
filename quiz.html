@@ -124,12 +124,12 @@
 <script>
 /* Danka Study Quiz engine — black/gold theme */
 var QUIZ_CATS = [
-  { id: 'haryana_gk', name: 'Haryana GK', icon: '🌾' },
-  { id: 'ssc',        name: 'SSC',        icon: '📚' },
-  { id: 'railway',    name: 'Railway',    icon: '🚂' },
-  { id: 'upsc',       name: 'UPSC',       icon: '🏛️' },
-  { id: 'up_gk',      name: 'UP GK',      icon: '🕌' },
-  { id: 'bihar_gk',   name: 'Bihar GK',   icon: '🌉' }
+  { id: 'haryana_gk', name: 'Haryana GK', icon: '🌾', files: ['data/quiz/cat_haryana_gk_1.json', 'data/quiz/cat_haryana_gk_2.json'], count: 611 },
+  { id: 'ssc',        name: 'SSC',        icon: '📚', files: ['data/quiz/cat_ssc_1.json', 'data/quiz/cat_ssc_2.json'],                 count: 738 },
+  { id: 'railway',    name: 'Railway',    icon: '🚂', files: ['data/quiz/cat_railway_1.json', 'data/quiz/cat_railway_2.json'],         count: 738 },
+  { id: 'upsc',       name: 'UPSC',       icon: '🏛️', files: ['data/quiz/cat_upsc_1.json', 'data/quiz/cat_upsc_2.json'],               count: 738 },
+  { id: 'up_gk',      name: 'UP GK',      icon: '🕌', files: ['data/quiz/cat_up_gk_1.json'],                                          count: 310 },
+  { id: 'bihar_gk',   name: 'Bihar GK',   icon: '🌉', files: ['data/quiz/cat_bihar_gk_1.json'],                                      count: 309 }
 ];
 var QUIZ_MONTHS = [
   { file: 'data/quiz/ca_2026_05.json', label: 'मई 2026' },
@@ -161,9 +161,8 @@ function qStopTimer() {
   if (Q.timerId) { clearInterval(Q.timerId); Q.timerId = null; }
 }
 function qCatCount(id) {
-  if (!quizBank || !quizBank.categories) return 0;
-  for (var i = 0; i < quizBank.categories.length; i++) {
-    if (quizBank.categories[i].id === id) return quizBank.categories[i].questions.length;
+  for (var i = 0; i < QUIZ_CATS.length; i++) {
+    if (QUIZ_CATS[i].id === id) return QUIZ_CATS[i].count;
   }
   return 0;
 }
@@ -177,20 +176,36 @@ function qPillRow(rowId, cb) {
     cb(b.getAttribute('data-v'));
   });
 }
+var catCache = {};
 function qSelectCategory(catId) {
-  if (!quizBank || !quizBank.categories) return;
-  var cat = null;
-  for (var i = 0; i < quizBank.categories.length; i++) {
-    if (quizBank.categories[i].id === catId) { cat = quizBank.categories[i]; break; }
+  var meta = null;
+  for (var i = 0; i < QUIZ_CATS.length; i++) {
+    if (QUIZ_CATS[i].id === catId) { meta = QUIZ_CATS[i]; break; }
   }
-  if (!cat) return;
-  sel = { kind: 'cat', name: cat.name, questions: cat.questions };
-  document.getElementById('setupTitle').textContent = cat.name;
-  document.getElementById('setupCount').textContent = 'कुल ' + cat.questions.length + ' प्रश्न उपलब्ध';
+  if (!meta) return;
+  document.getElementById('setupTitle').textContent = meta.name;
+  document.getElementById('setupCount').textContent = 'लोड हो रहा है…';
   document.querySelectorAll('#catGrid .cat-card').forEach(function (c) {
     c.classList.toggle('sel', c.getAttribute('data-cat') === catId);
   });
   qShow('screenSetup');
+  function ready(cat) {
+    sel = { kind: 'cat', name: cat.name, questions: cat.questions };
+    document.getElementById('setupTitle').textContent = cat.name;
+    document.getElementById('setupCount').textContent = 'कुल ' + cat.questions.length + ' प्रश्न उपलब्ध';
+  }
+  if (catCache[catId]) { ready(catCache[catId]); return; }
+  Promise.all(meta.files.map(function (f) { return fetchJSON(f, null); })).then(function (parts) {
+    var qs = [];
+    parts.forEach(function (p) { if (p && p.questions) qs = qs.concat(p.questions); });
+    if (!qs.length) {
+      document.getElementById('setupCount').textContent = 'लोड नहीं हुआ — दोबारा कोशिश करें';
+      return;
+    }
+    var cat = { id: meta.id, name: meta.name, questions: qs };
+    catCache[catId] = cat;
+    ready(cat);
+  });
 }
 function qSelectMonth(m) {
   document.getElementById('setupTitle').textContent = 'Current Affairs — ' + m.label;
@@ -290,20 +305,17 @@ function qResult() {
 
 document.addEventListener('DOMContentLoaded', function () {
   var cg = document.getElementById('catGrid');
-  fetchJSON('data/quiz/questions.json', null).then(function (d) {
-    quizBank = d;
-    cg.innerHTML = '';
-    QUIZ_CATS.forEach(function (c) {
-      var b = document.createElement('button');
-      b.className = 'cat-card';
-      b.setAttribute('data-cat', c.id);
-      b.innerHTML = '<span class="cicon">' + c.icon + '</span><strong>' + esc(c.name) +
-        '</strong><small>' + qCatCount(c.id) + ' प्रश्न</small>';
-      b.addEventListener('click', function () { qSelectCategory(c.id); });
-      cg.appendChild(b);
-    });
-    if (location.hash === '#haryana') qSelectCategory('haryana_gk');
+  cg.innerHTML = '';
+  QUIZ_CATS.forEach(function (c) {
+    var b = document.createElement('button');
+    b.className = 'cat-card';
+    b.setAttribute('data-cat', c.id);
+    b.innerHTML = '<span class="cicon">' + c.icon + '</span><strong>' + esc(c.name) +
+      '</strong><small>' + qCatCount(c.id) + ' प्रश्न</small>';
+    b.addEventListener('click', function () { qSelectCategory(c.id); });
+    cg.appendChild(b);
   });
+  if (location.hash === '#haryana') qSelectCategory('haryana_gk');
   var mg = document.getElementById('monthGrid');
   QUIZ_MONTHS.forEach(function (m) {
     var b = document.createElement('button');
