@@ -89,7 +89,7 @@ function renderLatest() {
     fetchJSON(path, []).then(function (items) {
       if (!items || !items.length) { el.innerHTML = '<li>' + esc(label) + ' जल्द जुड़ेंगे।</li>'; return; }
       items.sort(byNewest);
-      el.innerHTML = items.slice(0, 5).map(function (it) {
+      el.innerHTML = items.slice(0, 6).map(function (it) {
         return '<li><a href="' + esc(path.replace('data/', '').replace('.json', '.html'))
           .replace('answerkeys', 'answer-keys') + '">' + esc(it.title) + '</a>' +
           '<span class="meta">' + esc(it.org || '') +
